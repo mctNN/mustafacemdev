@@ -24,10 +24,10 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+      className="flex h-9 w-9 items-center justify-center border-2 border-fg text-fg transition-colors hover:bg-accent hover:text-accent-fg"
       aria-label={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
     >
-      {theme === "dark" ? <FiSun className="text-yellow-400" /> : <FiMoon />}
+      {theme === "dark" ? <FiSun /> : <FiMoon />}
     </button>
   );
 } 

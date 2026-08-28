@@ -1,8 +1,12 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { PageTransition } from "@/components/layout/PageTransition";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { NoiseOverlay } from "@/components/ui/NoiseOverlay";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,6 +18,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
 export const metadata = {
   title: "Mustafa Cem | Fullstack Yazılım Geliştirici",
   description: "Fullstack yazılım geliştirici Mustafa Cem'in kişisel web sitesi. JavaScript, React, Next.js, Node.js ve daha fazlası.",
@@ -22,19 +32,23 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="tr" className="scroll-smooth" suppressHydrationWarning>
+    <html lang="tr" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} bg-bg text-fg antialiased`}
         suppressHydrationWarning
       >
         <Providers>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Footer />
-          </div>
+          <SmoothScrollProvider>
+            <NoiseOverlay />
+            <CustomCursor />
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-grow">
+                <PageTransition>{children}</PageTransition>
+              </main>
+              <Footer />
+            </div>
+          </SmoothScrollProvider>
         </Providers>
       </body>
     </html>

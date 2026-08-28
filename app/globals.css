@@ -2,28 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Brütalist token sistemi: ham monokrom (siyah/beyaz) + tek şok renk (limon yeşili).
+   Kartlar/butonlar derinliği blur/gradient ile değil, kalın border + sert offset
+   gölgeyle (shadow-brutal) kazanıyor — bu yüzden bg ve bg-elevated bilinçli olarak aynı. */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+  --bg: 100% 0 0;
+  --bg-elevated: 100% 0 0;
+  --fg: 8% 0 0;
+  --fg-muted: 34% 0 0;
+  --accent: 74% 0.21 142;
+  --accent-fg: 10% 0.02 142;
+  --border: 8% 0 0;
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark {
-  --foreground-rgb: 255, 255, 255;
-  --background-rgb: 15, 23, 42;
+  --bg: 7% 0 0;
+  --bg-elevated: 7% 0 0;
+  --fg: 97% 0 0;
+  --fg-muted: 68% 0 0;
+  --accent: 84% 0.24 142;
+  --accent-fg: 8% 0.02 142;
+  --border: 97% 0 0;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  scroll-behavior: smooth;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Webkit scrollbar customization */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -33,88 +37,64 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 5px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: oklch(var(--fg-muted));
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
+  background: oklch(var(--accent));
 }
 
 @layer base {
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white;
     font-family: var(--font-geist-sans), system-ui, sans-serif;
   }
 
   ::selection {
-    @apply bg-blue-600/30 dark:bg-blue-500/30;
+    background: oklch(var(--accent));
+    color: oklch(var(--accent-fg));
+  }
+
+  :focus-visible {
+    outline: 3px solid oklch(var(--accent));
+    outline-offset: 2px;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
   }
 }
 
-@layer components {
-  .container {
-    @apply mx-auto max-w-7xl;
-  }
-  
-  .section-title {
-    @apply text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white;
-  }
-  
-  .section-subtitle {
-    @apply text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto;
-  }
-  
-  .btn {
-    @apply px-6 py-3 rounded-full font-medium transition-colors;
-  }
-  
-  .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white;
-  }
-  
-  .btn-secondary {
-    @apply border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800;
-  }
-  
-  .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow;
-  }
+/* Kod terminali imleci */
+@keyframes cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.animate-cursor-blink {
+  animation: cursor-blink 1s step-end infinite;
 }
 
-/* Animation utilities */
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-in-out forwards;
+/* Marquee/ticker şeridi: içerik iki kez basılıp %-50 kaydırılır, sonsuz döngü hissi verir */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee-scroll 22s linear infinite;
 }
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-in-out forwards;
-}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
+  /* Sonsuz döngülü marquee, yukarıdaki genel kural altında saniyede binlerce kez
+     tekrar edip göz kırpma etkisi yaratır — bunun yerine tamamen durdurulur. */
+  .animate-marquee {
+    animation-play-state: paused !important;
   }
 }
